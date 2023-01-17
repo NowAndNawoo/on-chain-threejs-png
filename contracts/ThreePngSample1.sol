@@ -1,37 +1,41 @@
+pragma solidity ^0.8.13;
+
 // Original code by @xtremetom
 // https://twitter.com/xtremetom/status/1600542212735090711
 // https://goerli.etherscan.io/address/0xfccef97532caa9ddd6840a9c87843b8d491370fc#code#F1#L1
-pragma solidity ^0.8.13;
+// Modified by nawoo (@NowAndNawoo)
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+
 import "./LibraryStorage.sol";
 
-contract ThreePngSample1 is ERC721 {
-    address private immutable _libStorageAddress;
+contract ThreePngSample1 is ERC721, Ownable {
+    using Strings for uint256;
 
-    // HELPERS
-    string public constant BEGIN_JSON = "data:application/json,%7B"; // data:application/json,{
-    string public constant END_JSON = "%7D"; // }
-    string public constant BEGIN_SCRIPT = "%253Cscript%253E"; // '<script>'
-    string public constant END_SCRIPT = "%253C%252Fscript%253E"; // </script>
-    string public constant BEGIN_SCRIPT_DATA = "%253Cscript%2520src%253D%2527"; // <script src='
-    string public constant END_SCRIPT_DATA = "%2527%253E%253C%252Fscript%253E"; // '></script>
+    LibraryStorage public immutable libraryStorage;
+    uint256 public nextTokenId = 1;
 
-    uint256 private _nextId = 1;
+    string private constant BEGIN_JSON = "data:application/json,%7B"; // data:application/json,{
+    string private constant END_JSON = "%7D"; // }
+    string private constant BEGIN_SCRIPT = "%253Cscript%253E"; // '<script>'
+    string private constant END_SCRIPT = "%253C%252Fscript%253E"; // </script>
+    string private constant BEGIN_SCRIPT_DATA = "%253Cscript%2520src%253D%2527"; // <script src='
+    string private constant END_SCRIPT_DATA = "%2527%253E%253C%252Fscript%253E"; // '></script>
 
-    constructor(address libStorageAddress) ERC721("ThreePngSample1", "PNG1") {
-        _libStorageAddress = libStorageAddress;
+    constructor(LibraryStorage libraryStorageAddress) ERC721("ThreePngSample1", "PNG1") {
+        libraryStorage = libraryStorageAddress;
     }
 
-    function mint() public {
-        _mint(msg.sender, _nextId);
-        unchecked {
-            ++_nextId;
-        }
+    function mint() public onlyOwner {
+        uint256 _tokenId = nextTokenId;
+        nextTokenId++;
+        _mint(msg.sender, _tokenId);
     }
 
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        string memory tokenIdStr = uint2str(tokenId);
+        string memory tokenIdStr = tokenId.toString();
         return
             string.concat(
                 BEGIN_JSON,
@@ -53,7 +57,7 @@ contract ThreePngSample1 is ERC721 {
             );
     }
 
-    function addRenderCode() internal pure returns (string memory) {
+    function addRenderCode() private pure returns (string memory) {
         return
             string.concat(
                 BEGIN_SCRIPT_DATA,
@@ -63,50 +67,26 @@ contract ThreePngSample1 is ERC721 {
             );
     }
 
-    function addCodeLibrariesAsImage() internal view returns (string memory) {
-        LibraryStorage libraryStorage = LibraryStorage(_libStorageAddress);
+    function addCodeLibrariesAsImage() private view returns (string memory) {
         return
             string.concat(
                 BEGIN_SCRIPT,
                 "var%2520data%2520%253D%2520%2522", // var data = "
                 "data%253Aimage%252Fpng%253Bbase64%252C", // data:image/png;base64,
-                libraryStorage.getLibrary("Sample1"),
+                string(libraryStorage.getLibrary("Sample1")),
                 "%2522%253B", // ";
                 END_SCRIPT
             );
     }
 
-    // via https://stackoverflow.com/a/65707309
-    function uint2str(uint256 _i) internal pure returns (string memory _uintAsString) {
-        if (_i == 0) {
-            return "0";
-        }
-        uint256 j = _i;
-        uint256 len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint256 k = len;
-        while (_i != 0) {
-            k = k - 1;
-            uint8 temp = (48 + uint8(_i - (_i / 10) * 10));
-            bytes1 b1 = bytes1(temp);
-            bstr[k] = b1;
-            _i /= 10;
-        }
-        return string(bstr);
-    }
-
-    function BEGIN_METADATA_VAR(string memory name, bool omitQuotes) public pure returns (string memory) {
+    function BEGIN_METADATA_VAR(string memory name, bool omitQuotes) private pure returns (string memory) {
         return
             (omitQuotes)
                 ? string(abi.encodePacked("%22", name, "%22%3A"))
                 : string(abi.encodePacked("%22", name, "%22%3A%22"));
     }
 
-    function END_METADATA_VAR(bool omitQuotes) public pure returns (string memory) {
+    function END_METADATA_VAR(bool omitQuotes) private pure returns (string memory) {
         return (omitQuotes) ? "%2C" : "%22%2C";
     }
 }

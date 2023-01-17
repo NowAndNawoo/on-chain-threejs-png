@@ -1,61 +1,44 @@
+pragma solidity ^0.8.13;
+
 // Original code by @xtremetom
 // https://twitter.com/xtremetom/status/1600542212735090711
 // https://goerli.etherscan.io/address/0xfccef97532caa9ddd6840a9c87843b8d491370fc#code#F2#L1
-pragma solidity ^0.8.13;
+// Modified by nawoo (@NowAndNawoo)
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./SSTORE2.sol";
 
-contract LibraryStorage {
-    mapping(string => address[]) _libraries2;
+contract LibraryStorage is Ownable {
+    mapping(string => address[]) public libraries;
 
-    address public owner;
-
-    error NotOwner();
-
-    constructor() {
-        owner = msg.sender;
+    function addChunk(string calldata name, bytes calldata chunk) public onlyOwner {
+        libraries[name].push(SSTORE2.write(chunk));
     }
 
-    modifier isOwner() {
-        if (msg.sender != owner) revert NotOwner();
-        _;
-    }
-
-    function addChunk(string calldata name, string calldata chunk) public isOwner {
-        _libraries2[name].push(SSTORE2.write(bytes(chunk)));
-    }
-
-    function getLibrary(string calldata name) public view returns (string memory o_code) {
-        address[] memory chunks = _libraries2[name];
-
+    function getLibrary(string calldata name) public view returns (bytes memory result) {
+        address[] memory chunks = libraries[name];
         unchecked {
             assembly {
                 let len := mload(chunks)
-                let totalSize := 0x20
+                let totalSize := 0x20 // header size (32bytes)
                 let size
-                o_code := mload(0x40)
-
-                // loop through all chunk addresses
-                // - get address
-                // - get data size
-                // - get code and add to o_code
-                // - update total size
+                result := mload(0x40) // get free memory pointer
                 let targetChunk
                 for {
                     let i := 0
                 } lt(i, len) {
                     i := add(i, 1)
                 } {
+                    // get chunks[i] pointer
                     targetChunk := mload(add(chunks, add(0x20, mul(i, 0x20))))
+                    // copy chunks[i] data to result
                     size := sub(extcodesize(targetChunk), 1)
-                    extcodecopy(targetChunk, add(o_code, totalSize), 1, size)
+                    extcodecopy(targetChunk, add(result, totalSize), 1, size)
+                    // update totalSize
                     totalSize := add(totalSize, size)
                 }
-
-                // update o_code size
-                mstore(o_code, sub(totalSize, 0x20))
-                // store o_code
-                mstore(0x40, add(o_code, and(add(totalSize, 0x1f), not(0x1f))))
+                mstore(result, sub(totalSize, 0x20)) // set length
+                mstore(0x40, add(result, and(add(totalSize, 0x1f), not(0x1f)))) // update free memory pointer
             }
         }
     }
