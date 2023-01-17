@@ -1,3 +1,6 @@
+// Original code by @xtremetom
+// https://twitter.com/xtremetom/status/1600542212735090711
+// https://goerli.etherscan.io/address/0xfccef97532caa9ddd6840a9c87843b8d491370fc#code#F2#L1
 pragma solidity ^0.8.13;
 
 import "./SSTORE2.sol";
