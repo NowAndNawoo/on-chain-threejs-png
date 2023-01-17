@@ -1,22 +1,43 @@
-import { ethers } from "hardhat";
+import { readFileSync } from 'fs';
+import { ethers } from 'hardhat';
+import { waitDeployed, waitTx } from './lib/common';
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  // signer
+  const [signer] = await ethers.getSigners();
+  console.log('signer:', signer.address);
 
-  const lockedAmount = ethers.utils.parseEther("1");
+  // LibraryStorageをデプロイ
+  const libraryStorage = await ethers.getContractFactory('LibraryStorage').then((factory) => factory.deploy());
+  await waitDeployed('LibraryStorage', libraryStorage);
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  // PNGを分割してアップロード
+  const chunkSize = 24256;
+  const libraryName = 'Sample1';
+  const pngPath = './output/Sample1.min.png';
 
-  await lock.deployed();
+  const png = readFileSync(pngPath);
+  const b64 = png.toString('base64');
+  const buffer = Buffer.from(b64);
+  const chunkCount = Math.ceil(buffer.length / chunkSize);
+  for (let i = 0; i < chunkCount; i++) {
+    const start = i * chunkSize;
+    const chunk = buffer.slice(start, start + chunkSize);
+    const tx = await libraryStorage.addChunk(libraryName, chunk);
+    await waitTx('addChunk ' + i, tx);
+  }
 
-  console.log(`Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`);
+  // ThreePngSample1をデプロイ
+  const sample1 = await ethers
+    .getContractFactory('ThreePngSample1')
+    .then((factory) => factory.deploy(libraryStorage.address));
+  await waitDeployed('Sample1', sample1);
+
+  // mint
+  const tx = await sample1.mint();
+  await waitTx('mint', tx);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
