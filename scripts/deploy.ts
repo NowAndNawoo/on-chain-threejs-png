@@ -12,7 +12,7 @@ async function main() {
   await waitDeployed('LibraryStorage', libraryStorage);
 
   // PNGを分割してアップロード
-  const chunkSize = 24256;
+  const chunkSize = 24575;
   const libraryName = 'Sample1';
   const pngPath = './output/Sample1.min.png';
 
@@ -36,6 +36,8 @@ async function main() {
   // mint
   const tx = await sample1.mint();
   await waitTx('mint', tx);
+
+  console.log('done!');
 }
 
 main().catch((error) => {
