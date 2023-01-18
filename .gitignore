@@ -9,3 +9,5 @@ typechain-types
 cache
 artifacts
 
+/output/1_metadata.json
+/output/2_animation_url.html
