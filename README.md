@@ -29,7 +29,7 @@ npx hardhat run scripts/create-png.ts
 
 Compress `output/sample1.png` and save as `output/sample1.min.png`.
 
-I converted the 469KB JS file to a 414KB PNG file using Jimp, then compressed it down to 126KB using [ImageOptim](https://imageoptim.com/mac).
+I converted the 471KB JS file to a 416KB PNG file using Jimp, then compressed it down to 127KB using [ImageOptim](https://imageoptim.com/mac).
 
 ### 3. Deploy and mint
 
