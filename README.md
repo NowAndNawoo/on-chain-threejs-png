@@ -4,7 +4,12 @@ Sample code for Fully-on-chain NFT with Three.js, using PNG image compression in
 I referred to [ROSES](https://opensea.io/assets/ethereum/0x3e743377417cd7ca70dcc9bf08fac55664ed3181/1) by @dhof and
 [RollerCoaster](https://testnets.opensea.io/assets/goerli/0xfccef97532caa9ddd6840a9c87843b8d491370fc/1) by @xtremetom.
 
-TODO: ss,opensea
+![](images/ss.png)
+
+Three.js, OrbitControls, and texture images are bundled into a single JavaScript file.
+
+[Etherscan](https://goerli.etherscan.io/address/0xD9E57434632ec29Bb904a45E106657aE8d51B949#code)  
+[OpenSea](https://testnets.opensea.io/ja/assets/goerli/0xd9e57434632ec29bb904a45e106657ae8d51b949/1)
 
 ## Setup
 
