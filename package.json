@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "clean": "hardhat clean",
     "compile": "hardhat compile",
@@ -20,5 +21,8 @@
     "hardhat": "^2.11.2",
     "jimp": "^0.16.2",
     "lodash": "^4.17.21"
-  }
+  },
+  "workspaces": [
+    "html/Sample1"
+  ]
 }
