@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import earth from './image/earth2.jpg';
+import earth from './image/earth.png';
 
 const size = { width: window.innerWidth, height: window.innerHeight };
 const scene = new THREE.Scene();
