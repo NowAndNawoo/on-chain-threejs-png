@@ -56,3 +56,5 @@ npx hardhat run scripts/deploy.ts --network goerli
 - [RollerCoaster Source Code](https://goerli.etherscan.io/address/0xfccef97532caa9ddd6840a9c87843b8d491370fc#code)
 - [ROSES Source Code](https://etherscan.io/address/0x3e743377417cd7ca70dcc9bf08fac55664ed3181#code)
 - [Earth texture image (public domain)](https://www.shadedrelief.com/natural3/pages/textures.html)
+
+See [Appendix](./appendix/) for more information about RollerCoaster.
