@@ -7,26 +7,25 @@
 
 ## Files
 
-- appendix/
-  - png/
-    - `1_RollerCoaster.png.b64`
-      - Return value of `getLibrary('RollerCoaster')`
-    - `2_RollerCoaster.png`
-      - Base64 decoded file of above
-    - `3_RollerCoaster.js`
-      - JS code obtained by decompressing PNG
-    - `4_RollerCoaster.prettify.js`
-      - Prettified JS code
-  - uri/
-    - `1_metadata.json`
-      - Return value of `tokenURI(1)`
-    - `2_animation_url.html`
-      - The value of animation_url of json
-    - `3_animation_url.prettify.html`
-      - Prettified HTML
-    - `4_injectScript.js`
-      - Decoded dataURL of script tag in body tag
-    - `5_injectScript.prettify.js`
-      - Prettified JS code
-    - `6_inejctScript.readable.js`
-      - Modified JS code for easier reading
+- png/
+  - `1_RollerCoaster.png.b64`
+    - Return value of `getLibrary('RollerCoaster')`
+  - `2_RollerCoaster.png`
+    - Base64 decoded file of above
+  - `3_RollerCoaster.js`
+    - JS code obtained by decompressing PNG
+  - `4_RollerCoaster.prettify.js`
+    - Prettified JS code
+- uri/
+  - `1_metadata.json`
+    - Return value of `tokenURI(1)`
+  - `2_animation_url.html`
+    - The value of animation_url of json
+  - `3_animation_url.prettify.html`
+    - Prettified HTML
+  - `4_injectScript.js`
+    - Decoded dataURL of script tag in body tag
+  - `5_injectScript.prettify.js`
+    - Prettified JS code
+  - `6_injectScript.readable.js`
+    - Modified JS code for easier reading
